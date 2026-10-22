@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Resistencias</title>
+    <!-- Incluimos Tailwind CSS para los estilos modernos y responsivos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Fondo oscuro */
+        }
+        /* Oculta las flechas por defecto en los inputs de número */
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-10 px-4 flex items-center justify-center bg-slate-900 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-800 to-slate-950 text-slate-100 selection:bg-pink-500 selection:text-white">
+
+    <div class="max-w-6xl w-full bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-[0_0_50px_rgba(6,182,212,0.15)] border border-slate-700 p-8">
+        
+        <!-- Título Central -->
+        <h1 class="text-3xl md:text-5xl font-bold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500 tracking-tight">
+            La Calculadora de Resistencias Mas Perrona
+        </h1>
+
+        <!-- Contenedor Grid a 3 columnas -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-10 mb-6">
+            
+            <!-- COLUMNA IZQUIERDA: Valores y Tolerancia -->
+            <div class="md:col-span-4 flex flex-col gap-8">
+                <!-- Input Valor -->
+                <div class="relative">
+                    <label class="block text-center text-xs font-bold text-cyan-400 uppercase tracking-wider mb-3 absolute -top-3 left-1/2 -translate-x-1/2 bg-slate-800 px-3 py-1 rounded-full border border-slate-600">
+                        Valor de la resistencia
+                    </label>
+                    <input type="number" id="targetValue" 
+                        class="w-full text-center pt-8 pb-4 px-4 bg-slate-900/50 border border-slate-600 text-cyan-300 font-bold text-3xl rounded-xl shadow-inner placeholder-slate-600 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/50 transition-all" 
+                        placeholder="Ej: 1500" min="0" step="any">
+                    <p class="text-center text-xs text-slate-400 mt-3">Valor deseado en Ohms (Ω)</p>
+                </div>
+
+                <!-- Botones de Tolerancia -->
+                <div class="flex flex-col gap-4 mt-2">
+                    <label class="cursor-pointer">
+                        <input type="radio" name="tolerance" value="10" class="peer hidden" checked>
+                        <div class="w-full text-center py-3 bg-slate-800 text-slate-300 font-medium rounded-xl border border-slate-600 peer-checked:border-pink-500 peer-checked:bg-pink-500/10 peer-checked:text-pink-400 peer-checked:shadow-[0_0_15px_rgba(236,72,153,0.3)] transition-all">
+                            10% (Serie E12)
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="tolerance" value="1" class="peer hidden">
+                        <div class="w-full text-center py-3 bg-slate-800 text-slate-300 font-medium rounded-xl border border-slate-600 peer-checked:border-pink-500 peer-checked:bg-pink-500/10 peer-checked:text-pink-400 peer-checked:shadow-[0_0_15px_rgba(236,72,153,0.3)] transition-all">
+                            1% (Serie E96)
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- COLUMNA CENTRAL: Selección de # de Resistencias -->
+            <div class="md:col-span-4 flex flex-col items-center justify-start gap-6 border-x-0 md:border-x md:border-slate-700 px-4">
+                <div class="bg-slate-800 border border-slate-600 py-2 px-6 rounded-full shadow-sm">
+                    <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider"># de resistencias</span>
+                </div>
+                
+                <div class="flex flex-col gap-5 w-full max-w-[200px] mt-2">
+                    <!-- Opciones generadas dinámicamente -->
+                    <label class="flex items-center justify-between cursor-pointer group bg-slate-900/50 p-2 rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition">
+                        <input type="radio" name="numResistors" value="1" class="hidden peer" checked>
+                        <div class="w-12 h-12 rounded-full border-2 border-slate-600 bg-slate-800 peer-checked:border-cyan-400 peer-checked:bg-cyan-500 flex items-center justify-center transition-all peer-checked:shadow-[0_0_15px_rgba(34,211,238,0.5)]">
+                            <svg class="w-6 h-6 text-slate-900 hidden peer-checked:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div class="flex-1 text-center text-xl font-bold text-slate-300 peer-checked:text-cyan-400">1</div>
+                    </label>
+                    
+                    <label class="flex items-center justify-between cursor-pointer group bg-slate-900/50 p-2 rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition">
+                        <input type="radio" name="numResistors" value="2" class="hidden peer">
+                        <div class="w-12 h-12 rounded-full border-2 border-slate-600 bg-slate-800 peer-checked:border-cyan-400 peer-checked:bg-cyan-500 flex items-center justify-center transition-all peer-checked:shadow-[0_0_15px_rgba(34,211,238,0.5)]">
+                            <svg class="w-6 h-6 text-slate-900 hidden peer-checked:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div class="flex-1 text-center text-xl font-bold text-slate-300 peer-checked:text-cyan-400">2</div>
+                    </label>
+
+                    <label class="flex items-center justify-between cursor-pointer group bg-slate-900/50 p-2 rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition">
+                        <input type="radio" name="numResistors" value="3" class="hidden peer">
+                        <div class="w-12 h-12 rounded-full border-2 border-slate-600 bg-slate-800 peer-checked:border-cyan-400 peer-checked:bg-cyan-500 flex items-center justify-center transition-all peer-checked:shadow-[0_0_15px_rgba(34,211,238,0.5)]">
+                            <svg class="w-6 h-6 text-slate-900 hidden peer-checked:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div class="flex-1 text-center text-xl font-bold text-slate-300 peer-checked:text-cyan-400">3</div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: Resultados -->
+            <div class="md:col-span-4 flex flex-col gap-5 relative">
+                <!-- Resultado Valor -->
+                <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col items-center">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Valor Obtenido</span>
+                    <div id="outValue" class="text-cyan-400 font-bold text-3xl text-center drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]">-</div>
+                </div>
+
+                <!-- Porcentaje de error -->
+                <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col items-center">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Margen de Error</span>
+                    <div id="outErrorContainer" class="w-full bg-slate-900/50 border border-slate-700 rounded-lg py-2 flex items-center justify-center transition-all">
+                        <span id="outError" class="text-slate-500 font-bold text-2xl">%</span>
+                    </div>
+                </div>
+
+                <!-- Info Adicional -->
+                <div class="grid grid-cols-2 gap-3 mt-1">
+                    <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700 shadow-inner flex flex-col justify-center items-center text-center">
+                        <span class="block text-[10px] text-pink-400 font-bold uppercase tracking-wider mb-1">Piezas</span>
+                        <span id="outResistors" class="text-slate-300 font-medium text-xs">-</span>
+                    </div>
+                    <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700 shadow-inner flex flex-col justify-center items-center text-center">
+                        <span class="block text-[10px] text-pink-400 font-bold uppercase tracking-wider mb-1">Arreglo</span>
+                        <span id="outTopology" class="text-slate-300 font-medium text-xs">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ESQUEMA VISUAL DEL ARREGLO -->
+            <div class="md:col-span-12 mt-4 flex flex-col">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="h-[1px] flex-1 bg-gradient-to-r from-transparent to-slate-600"></div>
+                    <h3 class="text-cyan-400 font-bold tracking-widest uppercase text-xs">Esquema del Circuito</h3>
+                    <div class="h-[1px] flex-1 bg-gradient-to-l from-transparent to-slate-600"></div>
+                </div>
+                <div id="diagramContainer" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-8 min-h-[160px] flex items-center justify-center overflow-x-auto shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]">
+                    <span class="text-slate-600 font-medium text-sm flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Ingresa un valor y presiona calcular
+                    </span>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Botón Calcular -->
+        <div class="flex justify-center mt-8">
+            <button id="calcBtn" class="bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-400 hover:to-pink-400 text-white font-extrabold tracking-widest uppercase py-4 px-16 rounded-xl shadow-[0_0_20px_rgba(236,72,153,0.4)] hover:shadow-[0_0_30px_rgba(34,211,238,0.6)] active:scale-95 transform transition-all text-lg flex items-center gap-3">
+                <span id="btnText">Calcular Valores</span>
+                <!-- Spinner SVG (oculto por defecto) -->
+                <svg id="btnSpinner" class="animate-spin h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mensaje de error (oculto por defecto) -->
+        <div id="errorMsg" class="text-pink-500 bg-pink-500/10 border border-pink-500/50 p-3 rounded-lg text-center font-medium mt-6 hidden">
+            Por favor, ingresa un valor de resistencia válido (mayor a 0).
+        </div>
+
+    </div>
+
+    <!-- Marca de agua / Firma estilo Cyberpunk -->
+    <div class="fixed bottom-4 right-6 md:bottom-8 md:right-10 pointer-events-none z-50 opacity-40 hover:opacity-100 transition-opacity duration-500">
+        <span class="text-4xl md:text-6xl font-black tracking-[0.2em] italic text-transparent bg-clip-text bg-gradient-to-br from-cyan-400 to-pink-500 drop-shadow-[0_0_15px_rgba(236,72,153,0.8)] select-none">
+            DARK
+        </span>
+    </div>
+
+    <!-- LOGICA JAVASCRIPT -->
+    <script>
+        // Bases de la serie E12 (10% Tolerancia)
+        const E12_BASES = [1.0, 1.2, 1.5, 1.8, 2.2, 2.7, 3.3, 3.9, 4.7, 5.6, 6.8, 8.2];
+        
+        // Bases de la serie E96 (1% Tolerancia)
+        const E96_BASES = [
+            1.00, 1.02, 1.05, 1.07, 1.10, 1.13, 1.15, 1.18, 1.21, 1.24, 1.27, 1.30, 1.33, 1.37, 
+            1.40, 1.43, 1.47, 1.50, 1.54, 1.58, 1.62, 1.65, 1.69, 1.74, 1.78, 1.82, 1.87, 1.91, 
+            1.96, 2.00, 2.05, 2.10, 2.15, 2.21, 2.26, 2.32, 2.37, 2.43, 2.49, 2.55, 2.61, 2.67, 
+            2.74, 2.80, 2.87, 2.94, 3.01, 3.09, 3.16, 3.24, 3.32, 3.40, 3.48, 3.57, 3.65, 3.74, 
+            3.83, 3.92, 4.02, 4.12, 4.22, 4.32, 4.42, 4.53, 4.64, 4.75, 4.87, 4.99, 5.11, 5.23, 
+            5.36, 5.49, 5.62, 5.76, 5.90, 6.04, 6.19, 6.34, 6.49, 6.65, 6.81, 6.98, 7.15, 7.32, 
+            7.50, 7.68, 7.87, 8.06, 8.25, 8.45, 8.66, 8.87, 9.09, 9.31, 9.53, 9.76
+        ];
+
+        // Función para generar todos los valores comerciales de 1 Ohm a 10 MOhms
+        function generarValores(bases) {
+            let pool = [];
+            for (let multiplicador = 0; multiplicador <= 6; multiplicador++) {
+                let factor = Math.pow(10, multiplicador);
+                for (let i = 0; i < bases.length; i++) {
+                    pool.push(bases[i] * factor);
+                }
+            }
+            return pool;
+        }
+
+        // Función para formatear el valor (Ej. 1500 -> 1.5 kΩ)
+        function formatearOhms(valor) {
+            if (valor < 1000) {
+                return parseFloat(valor.toFixed(2)) + " Ω";
+            } else if (valor < 1000000) {
+                return parseFloat((valor / 1000).toFixed(3)) + " kΩ";
+            } else {
+                return parseFloat((valor / 1000000).toFixed(3)) + " MΩ";
+            }
+        }
+
+        // Elementos del DOM
+        const btnCalc = document.getElementById('calcBtn');
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+        const errorMsg = document.getElementById('errorMsg');
+        
+        const uiOutValue = document.getElementById('outValue');
+        const uiOutError = document.getElementById('outError');
+        const uiOutErrorContainer = document.getElementById('outErrorContainer');
+        const uiOutResistors = document.getElementById('outResistors');
+        const uiOutTopology = document.getElementById('outTopology');
+        const uiDiagramContainer = document.getElementById('diagramContainer');
+
+        // Función para renderizar el diagrama visual
+        function renderDiagram(typeCode, resistors) {
+            // Componentes visuales reusables
+            const R = (val) => `<div class="border-2 border-pink-500 bg-slate-900 text-pink-400 px-3 py-1.5 rounded-lg text-xs font-mono font-bold shadow-[0_0_12px_rgba(236,72,153,0.4)] whitespace-nowrap z-10">${formatearOhms(val)}</div>`;
+            const WireH = `<div class="h-[2px] w-6 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"></div>`;
+            const BranchWire = `<div class="h-[2px] flex-1 min-w-[16px] bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"></div>`;
+            
+            const parallelBranch = (val) => `<div class="flex items-center w-full">${BranchWire}${R(val)}${BranchWire}</div>`;
+
+            let html = '';
+
+            switch(typeCode) {
+                case 'single':
+                    html = `<div class="flex items-center">${WireH}${R(resistors[0])}${WireH}</div>`;
+                    break;
+                case 'series_2':
+                    html = `<div class="flex items-center">${WireH}${R(resistors[0])}${WireH}${R(resistors[1])}${WireH}</div>`;
+                    break;
+                case 'series_3':
+                    html = `<div class="flex items-center">${WireH}${R(resistors[0])}${WireH}${R(resistors[1])}${WireH}${R(resistors[2])}${WireH}</div>`;
+                    break;
+                case 'parallel_2':
+                    html = `
+                    <div class="flex items-center justify-center w-full max-w-sm">
+                        ${WireH}
+                        <div class="flex flex-col gap-6 border-l-[2px] border-r-[2px] border-cyan-400 py-1 flex-1">
+                            ${parallelBranch(resistors[0])}
+                            ${parallelBranch(resistors[1])}
+                        </div>
+                        ${WireH}
+                    </div>`;
+                    break;
+                case 'parallel_3':
+                    html = `
+                    <div class="flex items-center justify-center w-full max-w-sm">
+                        ${WireH}
+                        <div class="flex flex-col gap-6 border-l-[2px] border-r-[2px] border-cyan-400 py-1 flex-1">
+                            ${parallelBranch(resistors[0])}
+                            ${parallelBranch(resistors[1])}
+                            ${parallelBranch(resistors[2])}
+                        </div>
+                        ${WireH}
+                    </div>`;
+                    break;
+                case 'mix_s_p': // R1 + (R2 || R3)
+                    html = `
+                    <div class="flex items-center justify-center w-full max-w-md">
+                        ${WireH}${R(resistors[0])}${WireH}
+                        <div class="flex flex-col gap-6 border-l-[2px] border-r-[2px] border-cyan-400 py-1 flex-1">
+                            ${parallelBranch(resistors[1])}
+                            ${parallelBranch(resistors[2])}
+                        </div>
+                        ${WireH}
+                    </div>`;
+                    break;
+                case 'mix_p_s': // R1 || (R2 + R3)
+                    html = `
+                    <div class="flex items-center justify-center w-full max-w-md">
+                        ${WireH}
+                        <div class="flex flex-col gap-6 border-l-[2px] border-r-[2px] border-cyan-400 py-1 flex-1">
+                            ${parallelBranch(resistors[0])}
+                            <div class="flex items-center w-full">${BranchWire}${R(resistors[1])}${WireH}${R(resistors[2])}${BranchWire}</div>
+                        </div>
+                        ${WireH}
+                    </div>`;
+                    break;
+            }
+
+            uiDiagramContainer.innerHTML = html;
+        }
+
+        // Lógica de Cálculo Principal Modificada (Retorna el typeCode)
+        function calcularMejorAproximacion(target, numResistors, isE96) {
+            const poolCompleto = generarValores(isE96 ? E96_BASES : E12_BASES);
+            
+            // OPTIMIZACIÓN para evitar congelamientos en cálculos pesados
+            const minVal = target * 0.02;
+            const maxVal = target * 50;
+            const pool = (numResistors > 1) ? poolCompleto.filter(r => r >= minVal && r <= maxVal) : poolCompleto;
+
+            let bestError = Infinity;
+            let bestValue = 0;
+            let bestResistors = [];
+            let bestTopology = '';
+            let bestTypeCode = '';
+
+            // Función auxiliar para registrar la mejor opción con código de tipo visual
+            function checkOption(valCalculado, arrResistors, strTopologia, typeCode) {
+                let err = Math.abs(valCalculado - target) / target;
+                if (err < bestError) {
+                    bestError = err;
+                    bestValue = valCalculado;
+                    bestResistors = [...arrResistors];
+                    bestTopology = strTopologia;
+                    bestTypeCode = typeCode;
+                }
+            }
+
+            let n = pool.length;
+
+            if (numResistors === 1) {
+                for (let i = 0; i < poolCompleto.length; i++) {
+                    checkOption(poolCompleto[i], [poolCompleto[i]], 'Única resistencia', 'single');
+                }
+            } 
+            else if (numResistors === 2) {
+                for (let i = 0; i < n; i++) {
+                    let r1 = pool[i];
+                    for (let j = i; j < n; j++) {
+                        let r2 = pool[j];
+                        checkOption(r1 + r2, [r1, r2], 'Serie (R1 + R2)', 'series_2');
+                        checkOption(1 / ((1/r1) + (1/r2)), [r1, r2], 'Paralelo (R1 || R2)', 'parallel_2');
+                    }
+                }
+            } 
+            else if (numResistors === 3) {
+                for (let i = 0; i < n; i++) {
+                    let r1 = pool[i];
+                    for (let j = i; j < n; j++) {
+                        let r2 = pool[j];
+                        for (let k = j; k < n; k++) {
+                            let r3 = pool[k];
+
+                            // Serie Total
+                            checkOption(r1 + r2 + r3, [r1, r2, r3], 'Serie (R1+R2+R3)', 'series_3');
+                            
+                            // Paralelo Total
+                            checkOption(1 / ((1/r1) + (1/r2) + (1/r3)), [r1, r2, r3], 'Paralelo (R1||R2||R3)', 'parallel_3');
+
+                            // Mixto A: Una en Serie con dos en Paralelo
+                            checkOption(r1 + 1 / ((1/r2) + (1/r3)), [r1, r2, r3], 'Mixto: R1 + (R2 || R3)', 'mix_s_p');
+                            checkOption(r2 + 1 / ((1/r1) + (1/r3)), [r2, r1, r3], 'Mixto: R2 + (R1 || R3)', 'mix_s_p'); // Cambiamos el orden visual para que el mayor quede como R1
+                            checkOption(r3 + 1 / ((1/r1) + (1/r2)), [r3, r1, r2], 'Mixto: R3 + (R1 || R2)', 'mix_s_p');
+
+                            // Mixto B: Una en Paralelo con dos en Serie
+                            checkOption(1 / ((1/r1) + (1/(r2 + r3))), [r1, r2, r3], 'Mixto: R1 || (R2 + R3)', 'mix_p_s');
+                            checkOption(1 / ((1/r2) + (1/(r1 + r3))), [r2, r1, r3], 'Mixto: R2 || (R1 + R3)', 'mix_p_s');
+                            checkOption(1 / ((1/r3) + (1/(r1 + r2))), [r3, r1, r2], 'Mixto: R3 || (R1 + R2)', 'mix_p_s');
+                        }
+                    }
+                }
+            }
+
+            return { value: bestValue, error: bestError, resistors: bestResistors, topology: bestTopology, typeCode: bestTypeCode };
+        }
+
+        // Evento del botón Calcular
+        btnCalc.addEventListener('click', () => {
+            const rawTarget = document.getElementById('targetValue').value;
+            const target = parseFloat(rawTarget);
+            const tolerance = document.querySelector('input[name="tolerance"]:checked').value;
+            const numResistors = parseInt(document.querySelector('input[name="numResistors"]:checked').value);
+
+            if (isNaN(target) || target <= 0) {
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+            errorMsg.classList.add('hidden');
+
+            btnText.innerText = "Calculando...";
+            btnSpinner.classList.remove('hidden');
+            btnCalc.disabled = true;
+
+            setTimeout(() => {
+                try {
+                    const isE96 = (tolerance === "1");
+                    const result = calcularMejorAproximacion(target, numResistors, isE96);
+
+                    const porcentaje = (result.error * 100).toFixed(4);
+                    const errorFormateado = parseFloat(porcentaje) === 0 ? "0%" : `${porcentaje}%`;
+                    const listaResistencias = result.resistors.map(r => formatearOhms(r)).join(", ");
+
+                    // Actualizar UI
+                    uiOutValue.innerText = formatearOhms(result.value);
+                    uiOutError.innerText = errorFormateado;
+                    uiOutResistors.innerText = listaResistencias;
+                    uiOutTopology.innerText = result.topology;
+
+                    // Dibujar el diagrama
+                    renderDiagram(result.typeCode, result.resistors);
+
+                    // Estilo del margen de error adaptado al tema oscuro
+                    if (result.error * 100 < 1.0) {
+                        uiOutErrorContainer.className = "w-full bg-green-500/20 border border-green-500/50 rounded-lg py-2 flex items-center justify-center transition-all shadow-[0_0_10px_rgba(34,197,94,0.3)]";
+                        uiOutError.className = "text-green-400 font-bold text-2xl";
+                    } else if (result.error * 100 < 5.0) {
+                        uiOutErrorContainer.className = "w-full bg-yellow-500/20 border border-yellow-500/50 rounded-lg py-2 flex items-center justify-center transition-all shadow-[0_0_10px_rgba(234,179,8,0.3)]";
+                        uiOutError.className = "text-yellow-400 font-bold text-2xl";
+                    } else {
+                        uiOutErrorContainer.className = "w-full bg-red-500/20 border border-red-500/50 rounded-lg py-2 flex items-center justify-center transition-all shadow-[0_0_10px_rgba(239,68,68,0.3)]";
+                        uiOutError.className = "text-red-400 font-bold text-2xl";
+                    }
+
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    btnText.innerText = "Calcular Valores";
+                    btnSpinner.classList.add('hidden');
+                    btnCalc.disabled = false;
+                }
+            }, 50);
+        });
+    </script>
+</body>
+</html>
